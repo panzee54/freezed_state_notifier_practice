@@ -1,9 +1,13 @@
 // Package imports:
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:state_notifier/state_notifier.dart';
-
 // Project imports:
 import 'package:todo_practice/todo_item_state.dart';
 import 'package:todo_practice/todo_state.dart';
+
+final todoProvider = StateNotifierProvider<TodoStateNotifier, TodoState>(
+  (ref) => TodoStateNotifier(),
+);
 
 class TodoStateNotifier extends StateNotifier<TodoState> {
   TodoStateNotifier() : super(const TodoState());
@@ -25,8 +29,11 @@ class TodoStateNotifier extends StateNotifier<TodoState> {
 
   void deleteTodo(int index) {
     final selectedTodo = state.todoList[index];
-    final newTodoList =
-        state.todoList.where((todo) => todo.id != selectedTodo.id).toList();
+    final newTodoList = state.todoList
+        .where(
+          (todo) => todo.id != selectedTodo.id,
+        )
+        .toList();
     state = state.copyWith(todoList: newTodoList);
   }
 

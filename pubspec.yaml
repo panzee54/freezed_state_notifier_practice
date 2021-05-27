@@ -32,9 +32,9 @@ dependencies:
   import_sorter: ^4.5.1
   #state_management
   flutter_hooks: ^0.17.0
+  hooks_riverpod: ^0.14.0+4
   state_notifier: ^0.7.0
   flutter_state_notifier: ^0.7.0
-  provider: ^5.0.0
   freezed_annotation:
 
 dev_dependencies:

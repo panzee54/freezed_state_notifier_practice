@@ -1,38 +1,32 @@
 // Flutter imports:
 import 'package:flutter/material.dart';
-
-// Package imports:
-import 'package:flutter_state_notifier/flutter_state_notifier.dart';
-import 'package:provider/provider.dart';
-
+import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 // Project imports:
-import 'package:todo_practice/todo_state.dart';
 import 'package:todo_practice/todo_state_notifier.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(
+    ProviderScope(
+      child: MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MultiProvider(
-      providers: [
-        StateNotifierProvider<TodoStateNotifier, TodoState>(
-          create: (_) => TodoStateNotifier(),
-        ),
-      ],
-      child: MaterialApp(
-        home: TodoListWidget(),
-      ),
+    return MaterialApp(
+      home: TodoListWidget(),
     );
   }
 }
 
-class TodoListWidget extends StatelessWidget {
+class TodoListWidget extends HookWidget {
   @override
   Widget build(BuildContext context) {
-    final todoList = context.watch<TodoState>().todoList;
+    final todoList = useProvider(todoProvider).todoList;
+    final todoStateNotifier = useProvider(todoProvider.notifier);
     return Scaffold(
       appBar: AppBar(
         title: const Text('TodoList'),
@@ -41,8 +35,7 @@ class TodoListWidget extends StatelessWidget {
         children: [
           TextFormField(
             autofocus: true,
-            onFieldSubmitted: (text) =>
-                context.read<TodoStateNotifier>().createTodo(text),
+            onFieldSubmitted: todoStateNotifier.createTodo,
           ),
           Expanded(
             child: ListView.builder(
@@ -50,9 +43,7 @@ class TodoListWidget extends StatelessWidget {
                 itemBuilder: (BuildContext context, int index) {
                   return ListTile(
                     leading: IconButton(
-                      onPressed: () => context
-                          .read<TodoStateNotifier>()
-                          .switchChecked(index),
+                      onPressed: () => todoStateNotifier.switchChecked(index),
                       icon: Icon(
                         todoList[index].isChecked
                             ? Icons.check_box_outlined
@@ -61,8 +52,7 @@ class TodoListWidget extends StatelessWidget {
                     ),
                     title: Text(todoList[index].body ?? 'Write todo!'),
                     trailing: IconButton(
-                      onPressed: () =>
-                          context.read<TodoStateNotifier>().deleteTodo(index),
+                      onPressed: () => todoStateNotifier.deleteTodo(index),
                       icon: const Icon(Icons.delete),
                     ),
                   );
